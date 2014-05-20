@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+  <title>HEASY GAME</title>
+  <style>
+    @font-face {
+      font-family: "Lobster";
+      font-style: normal;
+      font-weight: 400;
+      src: local("Lobster"), url("js/MWVf-Rwh4GLQVBEwbyI61Q.woff") format('woff');
+    }
+    body{
+      background-color: rgb(0, 70, 0);
+    }
+    .title{
+      font-family: "Lobster", serif;
+      font-size: 60px;
+      text-align: center;
+      color: white;
+      margin: 25px;
+    }
+    .canvasDiv{
+      background-color: white;
+      width: 800px;
+      height: 400px;
+      margin: 0px auto 0px auto;
+    }
+  </style>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/createjs.min.js"></script>
+  <script>
+    (function() {
+      var Snow = function(size, color, stage_width, stage_height, vx, vy) {
+        this.initialize(size, color, stage_width, stage_height, vx, vy);
+      }
+      var p = Snow.prototype = new createjs.Container();
+      p.Container_initialize = p.initialize;
+      p.initialize = function(size, color, stage_width, stage_height, vx, vy) {
+        this.Container_initialize();
+        this.size = size;
+        this.color = color;
+        this.stage_width = stage_width;
+        this.stage_height = stage_height;
+        this.vx = vx;
+        this.vy = vy;
+        this.background = new createjs.Shape();
+        this.background.graphics.beginFill(this.color).drawCircle(0,0,this.size);
+        this.addChild(this.background); 
+        this.on("tick", this.handleTick);
+        this.mouseChildren = false;
+      }
+      p.handleTick = function(event) {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= 0.01;
+        if (this.y > this.stage_height + this.size*2){
+          this.y = - this.size*2;
+          this.alpha = 1;
+        }
+        if (this.x > this.stage_width + this.size*2){
+          this.x = - this.size*2;
+        }
+      }
+      window.Snow = Snow;
+    }());
+    (function() {
+      var FlyText = function(text, color, stage_width, stage_height, vy, original_x, original_y, status) {
+        this.initialize(text, color, stage_width, stage_height, vy, original_x, original_y, status);
+      }
+      var p = FlyText.prototype = new createjs.Container();
+      p.Container_initialize = p.initialize;
+      p.initialize = function(text, color, stage_width, stage_height, vy, original_x, original_y, status) {
+        this.Container_initialize();
+        this.text = text;
+        this.color = color;
+        this.stage_width = stage_width;
+        this.stage_height = stage_height;
+        this.vy = vy;
+        this.original_x = original_x;
+        this.original_y = original_y;
+        this.status = status;
+        var text = new createjs.Text(this.text, "80px Lobster", this.color);
+        this.addChild(text); 
+        this.on("tick", this.handleTick);
+        this.on("click", this.handleClick);
+        this.mouseChildren = false;
+      }
+      p.handleTick = function(event) {
+        if (this.status == 1){
+          this.y += this.vy;
+          if (this.y > this.stage_height + 100){
+            this.y = -100;
+            this.vy = 3+getRandom(5);
+          }
+        }else{
+          this.y += (this.original_y - this.y)/10;
+        }
+      }
+      p.handleClick = function(event) {
+        if (this.status == 1){
+          this.status = 0;
+        }else{
+          this.status = 1;
+        }
+      }
+      window.FlyText = FlyText;
+    }());
+  </script>
+  <script>
+  $(function(){
+    var stage;
+    init();
+  });
+  function init() {
+    stage = new createjs.Stage("myCanvas");
+    var snow = [];
+    for (var i=0; i<20; i++){
+      snow[i] = new Snow(3+getRandom(3),"green",stage.canvas.width,stage.canvas.height,getRandom(5),5+getRandom(3));
+      snow[i].x = Math.random()*stage.canvas.width;
+      snow[i].y = Math.random()*stage.canvas.height;
+      stage.addChild(snow[i]);
+    }
+    character_array = ["H","E","A","S","Y","G","A","M","E",".","C","O","M"];
+    position_array = [80,135,180,235,280,325,370,415,480,525,540,585,635];
+    character = [];
+    for (var i=0; i<13; i++){
+      character[i] = new FlyText(character_array[i],"green",stage.canvas.width,stage.canvas.height,3+getRandom(5),position_array[i],150,1);
+      character[i].x = character[i].original_x;
+      character[i].y = -200;
+      stage.addChild(character[i]);
+    }
+    createjs.Ticker.on("tick", stage);
+    createjs.Ticker.setFPS(25);
+  }
+  function getRandom(n){
+    return Math.round(Math.random()*n);
+  }
+  </script>
+  </head>
+  <body>
+    <div class="title">HeasyGame is coming...</div>
+    <div class="canvasDiv">
+      <canvas id="myCanvas" width="800" height="400">Your browser does not support CANVAS!</canvas>
+    </div>
+    <div class="title">@bs90 - HeasyGame</div>
+  </body>
+</html>
