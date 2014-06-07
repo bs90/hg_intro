@@ -111,6 +111,7 @@
   </script>
   <script>
   $(function(){
+    var mycontainer;
     var stage;
     init();
   });
@@ -132,7 +133,7 @@
       character[i].y = -200;
       stage.addChild(character[i]);
     }
-    var mycontainer = new createjs.Container();
+    mycontainer = new createjs.Container();
     var myrect1 = new createjs.Shape();
     var myrect2 = new createjs.Shape();
     var myrect3 = new createjs.Shape();
@@ -186,6 +187,10 @@
     mycontainer.addChild(mysc4);
     stage.addChild(mycontainer);
     mycontainer.x = mycontainer.y = 100;
+    var rotate_rect = new createjs.Shape();
+    rotate_rect.graphics.beginFill("rgb(0,70,0)").drawRect(750, 350, 50, 50);
+    stage.addChild(rotate_rect);
+    rotate_rect.on("click", this.rotate_it);
     mycontainer.on("tick", this.testtick);
     mycontainer.on("dblclick", this.testclick);
     mycontainer.on("pressmove", function(evt) {
@@ -207,6 +212,9 @@
   }
   function testclick(event){
     this.angle += 90;
+  }
+  function rotate_it(event){
+    mycontainer.angle -= 90;
   }
   </script>
   </head>
